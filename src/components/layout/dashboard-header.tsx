@@ -14,6 +14,7 @@ import {
   CreditCard,
   ArrowRightLeft,
   Bot,
+  Settings,
 } from 'lucide-react';
 import {
   Breadcrumb,
@@ -102,6 +103,16 @@ export function DashboardHeader() {
               <LineChart className="h-5 w-5" />
               Investments
             </Link>
+            <Link
+              href="/dashboard/settings"
+              className={cn(
+                "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                pathname.startsWith('/dashboard/settings') && 'text-foreground'
+              )}
+            >
+                <Settings className="h-5 w-5" />
+                Settings
+            </Link>
             <ChatAssistant>
                 <div className="flex cursor-pointer items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
                     <Bot className="h-5 w-5" />
@@ -168,11 +179,13 @@ export function DashboardHeader() {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>{mockUserData.name}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/settings">Settings</Link>
+          </DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Link href="/login">Logout</Link>
+          <DropdownMenuItem asChild>
+            <Link href="/">Logout</Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
