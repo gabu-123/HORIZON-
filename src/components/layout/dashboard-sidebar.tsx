@@ -27,9 +27,9 @@ export function DashboardSidebar() {
 
   const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { href: '#', icon: ArrowRightLeft, label: 'Transfers' },
-    { href: '#', icon: CreditCard, label: 'Cards' },
-    { href: '#', icon: TrendingUp, label: 'Investments' },
+    { href: '/dashboard/transfers', icon: ArrowRightLeft, label: 'Transfers' },
+    { href: '/dashboard/cards', icon: CreditCard, label: 'Cards' },
+    { href: '/dashboard/investments', icon: TrendingUp, label: 'Investments' },
   ];
 
   return (

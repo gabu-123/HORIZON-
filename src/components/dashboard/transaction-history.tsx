@@ -18,18 +18,30 @@ import { mockUserData, Transaction } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 
-export function TransactionHistory() {
-  const transactions: Transaction[] =
+interface TransactionHistoryProps {
+  title?: string;
+  description?: string;
+  categoryFilter?: string;
+}
+
+export function TransactionHistory({
+  title = 'Recent Transactions',
+  description = 'A log of recent activity in your checking account.',
+  categoryFilter,
+}: TransactionHistoryProps) {
+  let transactions: Transaction[] =
     mockUserData.accounts.find((acc) => acc.type === 'Checking')
       ?.transactions || [];
+
+  if (categoryFilter) {
+    transactions = transactions.filter(txn => txn.category === categoryFilter);
+  }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Transactions</CardTitle>
-        <CardDescription>
-          A log of recent activity in your checking account.
-        </CardDescription>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>

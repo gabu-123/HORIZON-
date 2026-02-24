@@ -25,11 +25,30 @@ export type Card = {
   isFrozen: boolean;
 };
 
+export type InvestmentHolding = {
+  id: string;
+  name: string;
+  ticker: string;
+  shares: number;
+  price: number;
+  value: number;
+  changePercent: number;
+};
+
+export type InvestmentPortfolio = {
+  totalValue: number;
+  totalGainLoss: number;
+  totalGainLossPercent: number;
+  holdings: InvestmentHolding[];
+  history: { date: string; value: number }[];
+};
+
 export type UserData = {
   name: string;
   email: string;
   accounts: Account[];
   cards: Card[];
+  investments: InvestmentPortfolio;
 };
 
 export const mockUserData: UserData = {
@@ -134,4 +153,23 @@ export const mockUserData: UserData = {
       isFrozen: true,
     },
   ],
+  investments: {
+    totalValue: 75320.45,
+    totalGainLoss: 12820.45,
+    totalGainLossPercent: 20.5,
+    holdings: [
+        { id: 'inv_1', name: 'Apple Inc.', ticker: 'AAPL', shares: 50, price: 195.50, value: 9775.00, changePercent: 1.2 },
+        { id: 'inv_2', name: 'Tesla, Inc.', ticker: 'TSLA', shares: 30, price: 250.10, value: 7503.00, changePercent: -0.8 },
+        { id: 'inv_3', name: 'Vanguard S&P 500 ETF', ticker: 'VOO', shares: 100, price: 450.42, value: 45042.45, changePercent: 0.5 },
+        { id: 'inv_4', name: 'Microsoft Corp.', ticker: 'MSFT', shares: 40, price: 325.00, value: 13000.00, changePercent: 0.9 },
+    ],
+    history: [
+        { date: 'Jan', value: 60000 },
+        { date: 'Feb', value: 62000 },
+        { date: 'Mar', value: 65000 },
+        { date: 'Apr', value: 68000 },
+        { date: 'May', value: 71000 },
+        { date: 'Jun', value: 75320.45 },
+    ]
+  },
 };

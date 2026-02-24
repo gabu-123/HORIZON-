@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import React from 'react';
 import {
   Bell,
   Home,
@@ -9,7 +11,6 @@ import {
   Package2,
   PanelLeft,
   Search,
-  Users,
   CreditCard,
   ArrowRightLeft,
   Bot,
@@ -35,9 +36,13 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { mockUserData } from '@/lib/mock-data';
+import { ChatAssistant } from '../ai/chat-assistant';
+import { cn } from '@/lib/utils';
 
 export function DashboardHeader() {
   const userAvatar = PlaceHolderImages.find((img) => img.id === 'user-avatar');
+  const pathname = usePathname();
+  const pathSegments = pathname.split('/').filter(Boolean);
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -59,49 +64,74 @@ export function DashboardHeader() {
             </Link>
             <Link
               href="/dashboard"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              className={cn(
+                "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                pathname === '/dashboard' && 'text-foreground'
+              )}
             >
               <Home className="h-5 w-5" />
               Dashboard
             </Link>
              <Link
-              href="#"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              href="/dashboard/transfers"
+              className={cn(
+                "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                pathname === '/dashboard/transfers' && 'text-foreground'
+              )}
             >
               <ArrowRightLeft className="h-5 w-5" />
               Transfers
             </Link>
             <Link
-              href="#"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              href="/dashboard/cards"
+              className={cn(
+                "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                pathname === '/dashboard/cards' && 'text-foreground'
+              )}
             >
               <CreditCard className="h-5 w-5" />
               Cards
             </Link>
             <Link
-              href="#"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              href="/dashboard/investments"
+              className={cn(
+                "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                pathname === '/dashboard/investments' && 'text-foreground'
+              )}
             >
               <LineChart className="h-5 w-5" />
               Investments
             </Link>
-            <Link
-              href="#"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-            >
-              <Bot className="h-5 w-5" />
-              AI Assistant
-            </Link>
+            <ChatAssistant>
+                <div className="flex cursor-pointer items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+                    <Bot className="h-5 w-5" />
+                    AI Assistant
+                </div>
+            </ChatAssistant>
           </nav>
         </SheetContent>
       </Sheet>
       <Breadcrumb className="hidden md:flex">
         <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/dashboard">Dashboard</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
+          {pathSegments.map((segment, index) => {
+            const href = `/${pathSegments.slice(0, index + 1).join('/')}`;
+            const name = segment.charAt(0).toUpperCase() + segment.slice(1).replace('-', ' ');
+            const isLast = index === pathSegments.length - 1;
+            return (
+              <React.Fragment key={href}>
+                <BreadcrumbItem>
+                  {isLast ? (
+                    <BreadcrumbPage>{name}</BreadcrumbPage>
+                  ) : (
+                    <BreadcrumbLink asChild>
+                      <Link href={href}>{name}</Link>
+                    </BreadcrumbLink>
+                  )}
+                </BreadcrumbItem>
+                {!isLast && <BreadcrumbSeparator />}
+              </React.Fragment>
+            );
+          })}
         </BreadcrumbList>
       </Breadcrumb>
       <div className="relative ml-auto flex-1 md:grow-0">
