@@ -10,7 +10,6 @@ import {
   ArrowRightLeft,
   TrendingUp,
   Landmark,
-  Banknote,
 } from 'lucide-react';
 
 import {
@@ -27,7 +26,6 @@ export function DashboardSidebar() {
 
   const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { href: '/dashboard/payments', icon: Banknote, label: 'Payments' },
     { href: '/dashboard/transfers', icon: ArrowRightLeft, label: 'Transfers' },
     { href: '/dashboard/cards', icon: CreditCard, label: 'Cards' },
     { href: '/dashboard/investments', icon: TrendingUp, label: 'Investments' },

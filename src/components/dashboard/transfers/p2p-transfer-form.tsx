@@ -41,7 +41,7 @@ export function P2PTransferForm({
         id: `txn_${Date.now()}`,
         date: new Date().toISOString(),
         description: `Transfer to ${recipient}${note ? ` - ${note}`: ''}`,
-        amount: amount,
+        amount: -amount,
         type: 'debit',
         category: 'Transfers',
         status: 'Completed',
