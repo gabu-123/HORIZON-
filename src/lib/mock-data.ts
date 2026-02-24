@@ -51,6 +51,8 @@ export type UserData = {
   investments: InvestmentPortfolio;
 };
 
+const MOCK_DATE_NOW = new Date('2023-10-27T12:00:00.000Z').getTime();
+
 export const mockUserData: UserData = {
   name: 'Alex Doe',
   email: 'alex.doe@example.com',
@@ -63,7 +65,7 @@ export const mockUserData: UserData = {
       transactions: [
         {
           id: 'txn_1',
-          date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          date: new Date(MOCK_DATE_NOW - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           description: 'Netflix Subscription',
           amount: -15.99,
           type: 'debit',
@@ -72,7 +74,7 @@ export const mockUserData: UserData = {
         },
         {
           id: 'txn_2',
-          date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          date: new Date(MOCK_DATE_NOW - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           description: 'Salary Deposit',
           amount: 3500.0,
           type: 'credit',
@@ -81,7 +83,7 @@ export const mockUserData: UserData = {
         },
         {
           id: 'txn_3',
-          date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          date: new Date(MOCK_DATE_NOW - 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           description: 'Whole Foods Market',
           amount: -124.5,
           type: 'debit',
@@ -90,7 +92,7 @@ export const mockUserData: UserData = {
         },
         {
           id: 'txn_4',
-          date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          date: new Date(MOCK_DATE_NOW - 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           description: 'P2P from Jane Smith',
           amount: 50.0,
           type: 'credit',
@@ -99,7 +101,7 @@ export const mockUserData: UserData = {
         },
         {
           id: 'txn_5',
-          date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          date: new Date(MOCK_DATE_NOW - 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           description: 'Gas Station',
           amount: -45.25,
           type: 'debit',
@@ -116,7 +118,7 @@ export const mockUserData: UserData = {
       transactions: [
         {
           id: 'txn_6',
-          date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          date: new Date(MOCK_DATE_NOW - 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           description: 'Monthly Interest',
           amount: 35.80,
           type: 'credit',
@@ -125,7 +127,7 @@ export const mockUserData: UserData = {
         },
         {
           id: 'txn_7',
-          date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          date: new Date(MOCK_DATE_NOW - 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           description: 'Transfer to Checking',
           amount: -500.0,
           type: 'debit',

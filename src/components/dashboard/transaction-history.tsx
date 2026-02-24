@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   CardContent,
@@ -17,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { mockUserData, Transaction } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface TransactionHistoryProps {
   title?: string;
@@ -29,6 +32,12 @@ export function TransactionHistory({
   description = 'A log of recent activity in your checking account.',
   categoryFilter,
 }: TransactionHistoryProps) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   let transactions: Transaction[] =
     mockUserData.accounts.find((acc) => acc.type === 'Checking')
       ?.transactions || [];
@@ -74,7 +83,7 @@ export function TransactionHistory({
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {new Date(txn.date).toLocaleDateString()}
+                  {isClient ? new Date(txn.date).toLocaleDateString() : txn.date}
                 </TableCell>
                 <TableCell
                   className={cn('text-right font-medium', {
