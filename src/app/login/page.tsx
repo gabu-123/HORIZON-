@@ -42,11 +42,20 @@ export default function LoginPage() {
   };
 
   const handleOtpVerify = () => {
-    toast({
-      title: 'Sign In Successful',
-      description: 'Welcome back!',
-    });
-    router.push('/dashboard');
+    if (otp === '930521') {
+      toast({
+        title: 'Sign In Successful',
+        description: 'Welcome back!',
+      });
+      router.push('/dashboard');
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Invalid Code',
+        description: 'The verification code is incorrect. Please try again.',
+      });
+      setOtp('');
+    }
   };
 
   return (
@@ -136,6 +145,7 @@ export default function LoginPage() {
               type="button"
               onClick={handleOtpVerify}
               className="w-full"
+              disabled={otp.length !== 6}
             >
               Verify & Sign In
             </Button>
