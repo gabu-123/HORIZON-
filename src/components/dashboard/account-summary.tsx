@@ -34,7 +34,7 @@ export function AccountSummary() {
                     <p className="text-sm text-muted-foreground">Checking</p>
                     <p className="text-2xl font-semibold">
                     {checkingAccount
-                        ? `$${checkingAccount.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                        ? checkingAccount.balance.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
                         : '$0.00'}
                     </p>
                 </div>
@@ -47,7 +47,7 @@ export function AccountSummary() {
                     <p className="text-sm text-muted-foreground">Savings</p>
                     <p className="text-2xl font-semibold">
                     {savingsAccount
-                        ? `$${savingsAccount.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                        ? savingsAccount.balance.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
                         : '$0.00'}
                     </p>
                 </div>

@@ -17,12 +17,12 @@ export function InvestmentPortfolio() {
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="flex flex-col gap-1.5">
             <p className="text-sm text-muted-foreground">Total Value</p>
-            <p className="text-2xl font-semibold">${totalValue.toLocaleString()}</p>
+            <p className="text-2xl font-semibold">{totalValue.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</p>
           </div>
           <div className="flex flex-col gap-1.5">
             <p className="text-sm text-muted-foreground">Total Gain/Loss</p>
             <p className={cn("text-2xl font-semibold", totalGainLoss > 0 ? 'text-green-600' : 'text-red-600')}>
-              {totalGainLoss > 0 ? '+' : ''}${totalGainLoss.toLocaleString()}
+              {totalGainLoss > 0 ? '+' : ''}{totalGainLoss.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
             </p>
           </div>
           <div className="flex flex-col gap-1.5">

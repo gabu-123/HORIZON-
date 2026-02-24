@@ -45,8 +45,8 @@ export function HoldingsList() {
                   <div className="text-sm text-muted-foreground">{holding.ticker}</div>
                 </TableCell>
                 <TableCell className="hidden sm:table-cell">{holding.shares}</TableCell>
-                <TableCell className="hidden sm:table-cell text-right">${holding.price.toFixed(2)}</TableCell>
-                <TableCell className="hidden md:table-cell text-right font-medium">${holding.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                <TableCell className="hidden sm:table-cell text-right">{holding.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
+                <TableCell className="hidden md:table-cell text-right font-medium">{holding.value.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
                 <TableCell className="text-right">
                   <div
                     className={cn('flex items-center justify-end gap-1 font-medium', {
