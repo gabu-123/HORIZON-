@@ -10,28 +10,27 @@ import type { Transaction, Account } from '@/lib/mock-data';
 
 export default function TransfersPage() {
   const [accounts, setAccounts] = useState<Account[]>(mockUserData.accounts);
-  
-  const [transactions, setTransactions] = useState<Transaction[]>(
-    (
-      accounts.find((acc) => acc.type === 'Checking')
-        ?.transactions || []
-    ).filter((t) => t.category === 'Transfers')
-  );
 
   const handleNewTransfer = (newTransaction: Transaction, fromAccountNumber: string) => {
-    setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
     setAccounts(prevAccounts => 
         prevAccounts.map(account => {
             if(account.accountNumber === fromAccountNumber) {
                 return {
                     ...account,
-                    balance: account.balance + newTransaction.amount // amount is negative
+                    balance: account.balance + newTransaction.amount, // amount is negative
+                    transactions: [newTransaction, ...account.transactions]
                 }
             }
             return account;
         })
     )
   };
+
+  const transferTransactions = accounts
+    .flatMap(acc => acc.transactions)
+    .filter(t => t.category === 'Transfers')
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
 
   return (
     <div className="space-y-6">
@@ -62,7 +61,7 @@ export default function TransfersPage() {
         <TransactionHistory
             title="Transfer History"
             description="A log of your recent transfers."
-            transactions={transactions}
+            transactions={transferTransactions}
         />
       </div>
     </div>
