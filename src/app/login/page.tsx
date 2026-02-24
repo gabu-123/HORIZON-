@@ -34,7 +34,6 @@ export default function LoginPage() {
   const [isOtpOpen, setIsOtpOpen] = useState(false);
   const [otp, setOtp] = useState('');
   const { toast } = useToast();
-  const correctOtp = '930521';
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,20 +42,11 @@ export default function LoginPage() {
   };
 
   const handleOtpVerify = () => {
-    if (otp === correctOtp) {
-      toast({
-        title: 'Sign In Successful',
-        description: 'Welcome back!',
-      });
-      router.push('/dashboard');
-    } else {
-      toast({
-        variant: 'destructive',
-        title: 'Invalid OTP',
-        description: 'The code you entered is incorrect. Please try again.',
-      });
-      setOtp('');
-    }
+    toast({
+      title: 'Sign In Successful',
+      description: 'Welcome back!',
+    });
+    router.push('/dashboard');
   };
 
   return (
@@ -142,13 +132,9 @@ export default function LoginPage() {
                 </InputOTPGroup>
               </InputOTP>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Your one-time password is <span className="font-mono font-bold text-foreground">{correctOtp}</span>
-            </p>
             <Button
               type="button"
               onClick={handleOtpVerify}
-              disabled={otp.length < 6}
               className="w-full"
             >
               Verify & Sign In
