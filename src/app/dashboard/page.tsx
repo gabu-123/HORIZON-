@@ -5,27 +5,19 @@ import { CardManagement } from '@/components/dashboard/card-management';
 import { FinancialInsights } from '@/components/dashboard/financial-insights';
 import { P2PTransfer } from '@/components/dashboard/p2p-transfer';
 import { TransactionHistory } from '@/components/dashboard/transaction-history';
-import { mockUserData } from '@/lib/mock-data';
-import type { Transaction, Account } from '@/lib/mock-data';
-import { useState } from 'react';
+import { useAccounts } from '@/contexts/accounts-context';
+import type { Transaction } from '@/lib/mock-data';
 
 export default function DashboardPage() {
-  const [accounts, setAccounts] = useState<Account[]>(mockUserData.accounts);
-
-  const handleNewTransfer = (newTransaction: Transaction) => {
-    // P2P transfers are from checking account by default
-    setAccounts(prevAccounts => 
-        prevAccounts.map(account => {
-            if(account.type === 'Checking') {
-                return {
-                    ...account,
-                    balance: account.balance + newTransaction.amount, // amount is negative
-                    transactions: [newTransaction, ...account.transactions]
-                }
-            }
-            return account;
-        })
-    )
+  const { accounts, handleNewTransaction } = useAccounts();
+  
+  const handleP2PTransfer = (newTransaction: Transaction) => {
+    // P2P transfers are from checking account by default.
+    // Let's find the checking account from the current state.
+    const checkingAccount = accounts.find((acc) => acc.type === 'Checking');
+    if (checkingAccount) {
+        handleNewTransaction(newTransaction, checkingAccount.accountNumber);
+    }
   };
   
   const checkingAccount = accounts.find((acc) => acc.type === 'Checking');
@@ -40,7 +32,7 @@ export default function DashboardPage() {
         <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                  <FinancialInsights />
-                 <P2PTransfer onTransferSuccess={handleNewTransfer} />
+                 <P2PTransfer onTransferSuccess={handleP2PTransfer} />
             </div>
             <TransactionHistory transactions={checkingAccount?.transactions ?? []} />
         </div>

@@ -1,29 +1,17 @@
 'use client';
 
-import { useState } from 'react';
 import { Lock } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { TransferForm } from '@/components/dashboard/transfers/transfer-form';
 import { TransactionHistory } from '@/components/dashboard/transaction-history';
-import { mockUserData } from '@/lib/mock-data';
-import type { Transaction, Account } from '@/lib/mock-data';
+import { useAccounts } from '@/contexts/accounts-context';
+import type { Transaction } from '@/lib/mock-data';
 
 export default function TransfersPage() {
-  const [accounts, setAccounts] = useState<Account[]>(mockUserData.accounts);
+  const { accounts, handleNewTransaction } = useAccounts();
 
   const handleNewTransfer = (newTransaction: Transaction, fromAccountNumber: string) => {
-    setAccounts(prevAccounts => 
-        prevAccounts.map(account => {
-            if(account.accountNumber === fromAccountNumber) {
-                return {
-                    ...account,
-                    balance: account.balance + newTransaction.amount, // amount is negative
-                    transactions: [newTransaction, ...account.transactions]
-                }
-            }
-            return account;
-        })
-    )
+    handleNewTransaction(newTransaction, fromAccountNumber);
   };
 
   const transferTransactions = accounts
