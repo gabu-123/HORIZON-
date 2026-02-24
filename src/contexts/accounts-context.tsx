@@ -1,12 +1,13 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
 import { mockUserData } from '@/lib/mock-data';
-import type { Account, Transaction } from '@/lib/mock-data';
+import type { Account } from '@/lib/mock-data';
 
 interface AccountsContextType {
   accounts: Account[];
-  handleNewTransaction: (newTransaction: Transaction, targetAccountNumber: string) => void;
+  setAccounts: Dispatch<SetStateAction<Account[]>>;
+  handleNewTransaction: (newTransaction: any, targetAccountNumber: string) => void;
 }
 
 const AccountsContext = createContext<AccountsContextType | undefined>(undefined);
@@ -14,11 +15,10 @@ const AccountsContext = createContext<AccountsContextType | undefined>(undefined
 export function AccountsProvider({ children }: { children: ReactNode }) {
   const [accounts, setAccounts] = useState<Account[]>(mockUserData.accounts);
 
-  const handleNewTransaction = (newTransaction: Transaction, targetAccountNumber: string) => {
+  const handleNewTransaction = (newTransaction: any, fromAccountNumber: string) => {
     setAccounts(prevAccounts =>
       prevAccounts.map(account => {
-        if (account.accountNumber === targetAccountNumber) {
-          // Ensure the balance is updated correctly as a number
+        if (account.accountNumber === fromAccountNumber) {
           const newBalance = Number(account.balance) + Number(newTransaction.amount);
           return {
             ...account,
@@ -32,7 +32,7 @@ export function AccountsProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AccountsContext.Provider value={{ accounts, handleNewTransaction }}>
+    <AccountsContext.Provider value={{ accounts, setAccounts, handleNewTransaction }}>
       {children}
     </AccountsContext.Provider>
   );

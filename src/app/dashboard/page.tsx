@@ -12,6 +12,10 @@ export default function DashboardPage() {
   
   const checkingAccount = accounts.find((acc) => acc.type === 'Checking');
 
+  const allTransactions = accounts
+    .flatMap(acc => acc.transactions)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   return (
     <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
@@ -24,7 +28,7 @@ export default function DashboardPage() {
                  <FinancialInsights />
                  <P2PTransfer />
             </div>
-            <TransactionHistory transactions={checkingAccount?.transactions ?? []} />
+            <TransactionHistory transactions={allTransactions} />
         </div>
       </div>
     </div>

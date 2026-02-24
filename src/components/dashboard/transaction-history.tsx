@@ -16,7 +16,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { mockUserData, Transaction } from '@/lib/mock-data';
+import type { Transaction } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -24,30 +24,19 @@ import { useEffect, useState } from 'react';
 interface TransactionHistoryProps {
   title?: string;
   description?: string;
-  categoryFilter?: string;
   transactions?: Transaction[];
 }
 
 export function TransactionHistory({
   title = 'Recent Transactions',
-  description = 'A log of recent activity in your checking account.',
-  categoryFilter,
-  transactions: transactionsProp,
+  description = 'A log of recent activity on your accounts.',
+  transactions = [],
 }: TransactionHistoryProps) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  let transactionsToDisplay: Transaction[] =
-    transactionsProp ??
-    mockUserData.accounts.find((acc) => acc.type === 'Checking')
-      ?.transactions ?? [];
-
-  if (categoryFilter) {
-    transactionsToDisplay = transactionsToDisplay.filter(txn => txn.category === categoryFilter);
-  }
 
   return (
     <Card>
@@ -67,7 +56,14 @@ export function TransactionHistory({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactionsToDisplay.slice(0, 5).map((txn) => (
+            {transactions.length === 0 && (
+                <TableRow>
+                    <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                        No transactions found.
+                    </TableCell>
+                </TableRow>
+            )}
+            {transactions.slice(0, 5).map((txn) => (
               <TableRow key={txn.id}>
                 <TableCell>
                   <div className="flex items-center gap-2">
@@ -86,7 +82,7 @@ export function TransactionHistory({
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {isClient ? new Date(txn.date).toLocaleDateString() : txn.date}
+                  {isClient ? new Date(txn.date).toLocaleDateString() : ''}
                 </TableCell>
                 <TableCell
                   className={cn('text-right font-medium', {

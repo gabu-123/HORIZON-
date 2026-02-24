@@ -6,6 +6,19 @@ export type Transaction = {
   type: 'debit' | 'credit';
   category: string;
   status: 'Completed' | 'Pending' | 'Failed';
+  cardId?: string;
+};
+
+export type Card = {
+  id: string;
+  name: string;
+  type: 'Virtual' | 'Physical';
+  provider: 'Visa' | 'Mastercard';
+  lastFour: string;
+  expiryDate: string;
+  isFrozen: boolean;
+  spendingLimit: number;
+  monthlySpending: number;
 };
 
 export type Account = {
@@ -14,15 +27,7 @@ export type Account = {
   accountNumber: string;
   balance: number;
   transactions: Transaction[];
-};
-
-export type Card = {
-  id: string;
-  type: 'Virtual' | 'Physical';
-  provider: 'Visa' | 'Mastercard';
-  lastFour: string;
-  expiryDate: string;
-  isFrozen: boolean;
+  cards: Card[];
 };
 
 export type InvestmentHolding = {
@@ -47,7 +52,6 @@ export type UserData = {
   name: string;
   email: string;
   accounts: Account[];
-  cards: Card[];
   investments: InvestmentPortfolio;
 };
 
@@ -62,7 +66,62 @@ export const mockUserData: UserData = {
       type: 'Checking',
       accountNumber: '**** **** **** 1234',
       balance: 115567.87,
-      transactions: [],
+      transactions: [
+        {
+          id: 'txn_c_1',
+          cardId: 'card_1',
+          date: new Date(MOCK_DATE_NOW - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          description: 'Coffee Shop',
+          amount: -4.50,
+          type: 'debit',
+          category: 'Food & Drink',
+          status: 'Completed',
+        },
+        {
+          id: 'txn_c_2',
+          cardId: 'card_1',
+          date: new Date(MOCK_DATE_NOW - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          description: 'Amazon.com',
+          amount: -128.99,
+          type: 'debit',
+          category: 'Shopping',
+          status: 'Completed',
+        },
+        {
+          id: 'txn_c_3',
+          cardId: 'card_2',
+          date: new Date(MOCK_DATE_NOW - 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          description: 'Netflix Subscription',
+          amount: -15.99,
+          type: 'debit',
+          category: 'Subscriptions',
+          status: 'Completed',
+        },
+      ],
+      cards: [
+        {
+          id: 'card_1',
+          name: 'Horizon Plus',
+          type: 'Physical',
+          provider: 'Visa',
+          lastFour: '1234',
+          expiryDate: '12/26',
+          isFrozen: false,
+          spendingLimit: 5000,
+          monthlySpending: 1450.75,
+        },
+        {
+          id: 'card_2',
+          name: 'Horizon Virtual',
+          type: 'Virtual',
+          provider: 'Mastercard',
+          lastFour: '9876',
+          expiryDate: '06/25',
+          isFrozen: true,
+          spendingLimit: 1000,
+          monthlySpending: 320.50,
+        },
+      ],
     },
     {
       id: 'acc_sav_1',
@@ -71,7 +130,7 @@ export const mockUserData: UserData = {
       balance: 28750.0,
       transactions: [
         {
-          id: 'txn_6',
+          id: 'txn_s_1',
           date: new Date(MOCK_DATE_NOW - 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           description: 'Monthly Interest',
           amount: 35.80,
@@ -79,34 +138,8 @@ export const mockUserData: UserData = {
           category: 'Interest',
           status: 'Completed',
         },
-        {
-          id: 'txn_7',
-          date: new Date(MOCK_DATE_NOW - 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          description: 'Transfer to Checking',
-          amount: -500.0,
-          type: 'debit',
-          category: 'Transfers',
-          status: 'Completed',
-        },
       ],
-    },
-  ],
-  cards: [
-    {
-      id: 'card_1',
-      type: 'Physical',
-      provider: 'Visa',
-      lastFour: '1234',
-      expiryDate: '12/26',
-      isFrozen: false,
-    },
-    {
-      id: 'card_2',
-      type: 'Virtual',
-      provider: 'Mastercard',
-      lastFour: '9876',
-      expiryDate: '06/25',
-      isFrozen: true,
+      cards: [],
     },
   ],
   investments: {
