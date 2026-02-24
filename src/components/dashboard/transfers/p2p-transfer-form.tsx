@@ -13,23 +13,50 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { Transaction } from '@/lib/mock-data';
 import { DollarSign, Send, Users } from 'lucide-react';
 import { useState } from 'react';
 
-export function P2PTransferForm() {
+export function P2PTransferForm({
+  onTransferSuccess,
+}: {
+  onTransferSuccess?: (newTransaction: Transaction) => void;
+}) {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSendMoney = (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
-    const amount = form.elements.namedItem('amount') as HTMLInputElement;
-    const recipient = form.elements.namedItem('recipient') as HTMLInputElement;
+    const recipientInput = form.elements.namedItem('recipient') as HTMLInputElement;
+    const amountInput = form.elements.namedItem('amount') as HTMLInputElement;
+    const noteInput = form.elements.namedItem('note') as HTMLInputElement;
 
+    const recipient = recipientInput.value;
+    const amount = parseFloat(amountInput.value);
+    const note = noteInput.value;
+
+    if (onTransferSuccess) {
+      const newTransaction: Transaction = {
+        id: `txn_${Date.now()}`,
+        date: new Date().toISOString(),
+        description: `Transfer to ${recipient}${note ? ` - ${note}`: ''}`,
+        amount: amount,
+        type: 'debit',
+        category: 'Transfers',
+        status: 'Completed',
+      };
+      onTransferSuccess(newTransaction);
+    }
+    
     toast({
       title: 'Transfer Sent',
-      description: `You sent $${amount.value} to ${recipient.value}.`,
+      description: `You sent ${amount.toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      })} to ${recipient}.`,
     });
+
     setIsOpen(false);
     form.reset();
   };

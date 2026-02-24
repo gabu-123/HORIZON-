@@ -25,12 +25,14 @@ interface TransactionHistoryProps {
   title?: string;
   description?: string;
   categoryFilter?: string;
+  transactions?: Transaction[];
 }
 
 export function TransactionHistory({
   title = 'Recent Transactions',
   description = 'A log of recent activity in your checking account.',
   categoryFilter,
+  transactions: transactionsProp,
 }: TransactionHistoryProps) {
   const [isClient, setIsClient] = useState(false);
 
@@ -38,12 +40,13 @@ export function TransactionHistory({
     setIsClient(true);
   }, []);
 
-  let transactions: Transaction[] =
+  let transactionsToDisplay: Transaction[] =
+    transactionsProp ??
     mockUserData.accounts.find((acc) => acc.type === 'Checking')
-      ?.transactions || [];
+      ?.transactions ?? [];
 
   if (categoryFilter) {
-    transactions = transactions.filter(txn => txn.category === categoryFilter);
+    transactionsToDisplay = transactionsToDisplay.filter(txn => txn.category === categoryFilter);
   }
 
   return (
@@ -64,7 +67,7 @@ export function TransactionHistory({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions.slice(0, 5).map((txn) => (
+            {transactionsToDisplay.slice(0, 5).map((txn) => (
               <TableRow key={txn.id}>
                 <TableCell>
                   <div className="flex items-center gap-2">
