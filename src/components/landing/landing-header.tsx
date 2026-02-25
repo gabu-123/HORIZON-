@@ -32,7 +32,7 @@ export function LandingHeader() {
             <Button variant="ghost">Sign In</Button>
           </Link>
           <Link href="/onboarding">
-            <Button>Sign Up</Button>
+            <Button>Enroll</Button>
           </Link>
         </div>
       </nav>

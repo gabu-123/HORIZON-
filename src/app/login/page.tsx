@@ -108,7 +108,7 @@ export default function LoginPage() {
                   href="/onboarding"
                   className="font-medium text-primary hover:underline"
                 >
-                  Sign Up
+                  Enroll
                 </Link>
               </p>
             </CardFooter>
