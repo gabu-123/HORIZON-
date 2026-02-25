@@ -1,7 +1,6 @@
 'use client';
 
-import { personalizeFinancialInsights } from '@/ai/flows/personalized-financial-insights';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -18,31 +17,11 @@ type Insights = {
 };
 
 export function FinancialInsights() {
-  const [insights, setInsights] = useState<Insights | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchInsights() {
-      setLoading(true);
-      try {
-        const result = await personalizeFinancialInsights({
-          spendingPatterns: 'User spends a significant portion of their income on dining out and subscriptions. Groceries and transport are moderate expenses.',
-          income: 'User has a stable monthly salary with occasional freelance income.',
-          financialGoals: 'Save for a down payment on a house within 3 years.',
-        });
-        setInsights(result);
-      } catch (error) {
-        console.error('Failed to fetch financial insights:', error);
-        setInsights({
-          insights: 'Could not load insights at this time.',
-          recommendations: 'Please try again later.',
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchInsights();
-  }, []);
+  const [insights] = useState<Insights | null>({
+    insights: 'Your spending on dining out is higher than average for your income bracket. This is a key area for potential savings.',
+    recommendations: 'Try reducing dining out by one meal per week. This could save you over $200 a month to put towards your housing goal.'
+  });
+  const [loading] = useState(false);
 
   return (
     <Card>
