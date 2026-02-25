@@ -5,7 +5,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { mockUserData } from '@/lib/mock-data';
 import type { Account } from '@/lib/mock-data';
 import { DollarSign, Wallet } from 'lucide-react';
 
@@ -21,7 +20,7 @@ export function AccountSummary({ accounts }: { accounts: Account[] }) {
     <>
       <Card className="sm:col-span-2">
         <CardHeader className="pb-2">
-          <CardTitle>Welcome back, {mockUserData.name.split(' ')[0]}!</CardTitle>
+          <CardTitle>Welcome back, 874219!</CardTitle>
           <CardDescription>
             Here&apos;s a summary of your accounts.
           </CardDescription>
