@@ -15,7 +15,6 @@ import {
   ArrowRightLeft,
   Bot,
   Settings,
-  Banknote,
 } from 'lucide-react';
 import {
   Breadcrumb,
@@ -72,16 +71,6 @@ export function DashboardHeader() {
             >
               <Home className="h-5 w-5" />
               Dashboard
-            </Link>
-            <Link
-              href="/dashboard/payments"
-              className={cn(
-                'flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground',
-                pathname.startsWith('/dashboard/payments') && 'text-foreground'
-              )}
-            >
-              <Banknote className="h-5 w-5" />
-              Payments
             </Link>
              <Link
               href="/dashboard/transfers"
