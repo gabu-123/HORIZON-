@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, Dispatch, SetStateAction } from 'react';
+import { useRouter } from 'next/navigation';
 import { mockUserData } from '@/lib/mock-data';
 import type { Account, Transaction } from '@/lib/mock-data';
 
@@ -8,6 +9,8 @@ interface AccountsContextType {
   accounts: Account[];
   setAccounts: Dispatch<SetStateAction<Account[]>>;
   handleNewTransaction: (newTransaction: Transaction, targetAccountNumber: string) => void;
+  transferCount: number;
+  handleLogout: () => void;
 }
 
 const AccountsContext = createContext<AccountsContextType | undefined>(undefined);
@@ -15,8 +18,10 @@ const AccountsContext = createContext<AccountsContextType | undefined>(undefined
 const LOCAL_STORAGE_KEY = 'horizon-bank-data';
 
 export function AccountsProvider({ children }: { children: ReactNode }) {
-  const [accounts, setAccounts] = useState<Account[]>(mockUserData.accounts);
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [transferCount, setTransferCount] = useState(0);
+  const router = useRouter();
 
   // Load state from localStorage on initial client-side render
   useEffect(() => {
@@ -24,10 +29,11 @@ export function AccountsProvider({ children }: { children: ReactNode }) {
       const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (storedData) {
         setAccounts(JSON.parse(storedData));
+      } else {
+        setAccounts(mockUserData.accounts);
       }
     } catch (error) {
       console.error("Failed to load data from localStorage", error);
-      // Fallback to mock data if localStorage is corrupt
       setAccounts(mockUserData.accounts);
     }
     setIsInitialized(true);
@@ -35,7 +41,6 @@ export function AccountsProvider({ children }: { children: ReactNode }) {
 
   // Persist state to localStorage whenever it changes
   useEffect(() => {
-    // Only save to localStorage after the initial load is complete
     if (isInitialized) {
       try {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(accounts));
@@ -44,6 +49,15 @@ export function AccountsProvider({ children }: { children: ReactNode }) {
       }
     }
   }, [accounts, isInitialized]);
+  
+  const handleLogout = () => {
+    // Clear persisted data
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    // Reset component state and redirect
+    setAccounts(mockUserData.accounts);
+    setTransferCount(0);
+    router.push('/login');
+  };
 
   const handleNewTransaction = (newTransaction: Transaction, fromAccountNumber: string) => {
     setAccounts(prevAccounts =>
@@ -59,10 +73,19 @@ export function AccountsProvider({ children }: { children: ReactNode }) {
         return account;
       })
     );
+    setTransferCount(prevCount => prevCount + 1);
+  };
+
+  const value = {
+    accounts,
+    setAccounts,
+    handleNewTransaction,
+    transferCount,
+    handleLogout
   };
 
   return (
-    <AccountsContext.Provider value={{ accounts, setAccounts, handleNewTransaction }}>
+    <AccountsContext.Provider value={value}>
       {children}
     </AccountsContext.Provider>
   );

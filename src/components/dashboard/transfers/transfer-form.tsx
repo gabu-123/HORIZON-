@@ -33,6 +33,8 @@ import { TransferSummary } from './transfer-summary';
 import { TransferSuccessDialog } from './transfer-success-dialog';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { useAccounts } from '@/contexts/accounts-context';
+import { SecurityLockoutDialog } from './security-lockout-dialog';
 
 const bankTransferSchema = z.object({
   fromAccount: z.string().nonempty('Please select an account to transfer from.'),
@@ -57,8 +59,10 @@ interface TransferFormProps {
 }
 
 export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps) {
+  const { transferCount, handleLogout } = useAccounts();
   const [isSummaryOpen, setIsSummaryOpen] = React.useState(false);
   const [isSuccessOpen, setIsSuccessOpen] = React.useState(false);
+  const [isLockoutOpen, setIsLockoutOpen] = React.useState(false);
   const [transactionId, setTransactionId] = React.useState('');
   const [completedTransferData, setCompletedTransferData] = React.useState<BankTransferFormValues | null>(null);
 
@@ -80,6 +84,11 @@ export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps)
   const selectedFromAccount = accounts.find(acc => acc.accountNumber === form.watch('fromAccount'));
   
   function onSubmit(data: BankTransferFormValues) {
+    if (transferCount >= 2) {
+      setIsLockoutOpen(true);
+      return;
+    }
+
     if ((selectedFromAccount?.balance || 0) < data.amount) {
         form.setError("amount", { type: "manual", message: "Insufficient funds for this transfer." });
         return;
@@ -364,6 +373,11 @@ export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps)
           data={completedTransferData}
         />
       )}
+
+      <SecurityLockoutDialog 
+        isOpen={isLockoutOpen}
+        onConfirm={handleLogout}
+      />
     </>
   );
 }
