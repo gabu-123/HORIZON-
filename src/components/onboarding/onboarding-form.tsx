@@ -27,6 +27,11 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
 
 const personalInfoSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
@@ -54,11 +59,13 @@ const steps = [
   { title: 'Personal Information', description: "Let's get to know you." },
   { title: 'Contact Information', description: 'How can we reach you?' },
   { title: 'Set Your Password', description: 'Secure your new account.' },
+  { title: 'Verify Your Identity', description: 'For your security, please enter the 6-digit code sent to your device.' },
   { title: 'All Set!', description: 'Your account is ready.' },
 ];
 
 export function OnboardingForm() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [otp, setOtp] = useState('');
   const router = useRouter();
   const { toast } = useToast();
 
@@ -71,10 +78,11 @@ export function OnboardingForm() {
     const result = formSchemas[currentStep].safeParse(data);
     if (!result.success) return;
     
-    if (currentStep < steps.length - 2) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      // Final step submission logic
+    setCurrentStep(currentStep + 1);
+  };
+  
+  const handleOtpVerify = () => {
+    if (otp === '930521') {
       console.log('Onboarding data:', form.getValues());
       toast({
         title: 'Account Created!',
@@ -82,9 +90,16 @@ export function OnboardingForm() {
       });
       setCurrentStep(currentStep + 1);
       setTimeout(() => router.push('/dashboard'), 2000);
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Invalid Code',
+        description: 'The verification code is incorrect. Please try again.',
+      });
+      setOtp('');
     }
   };
-  
+
   const onBack = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
@@ -133,6 +148,27 @@ export function OnboardingForm() {
         );
       case 3:
         return (
+          <div className="flex flex-col items-center gap-4 pt-4">
+            <div className="flex justify-center">
+              <InputOTP
+                maxLength={6}
+                value={otp}
+                onChange={(value) => setOtp(value)}
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+          </div>
+        );
+      case 4:
+        return (
           <div className="flex flex-col items-center justify-center text-center">
             <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 260, damping: 20 }}>
               <CheckCircle className="h-24 w-24 text-green-500" />
@@ -167,17 +203,32 @@ export function OnboardingForm() {
               </motion.div>
             </AnimatePresence>
           </CardContent>
-          {currentStep < steps.length - 1 && (
+          {currentStep < 3 && (
             <CardFooter className="flex justify-between">
               <Button type="button" variant="outline" onClick={onBack} disabled={currentStep === 0}>
                 Back
               </Button>
               <Button type="submit" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                {currentStep === steps.length - 2 ? 'Create Account' : 'Next'}
+                Next
               </Button>
             </CardFooter>
           )}
         </form>
+        {currentStep === 3 && (
+          <CardFooter className="flex justify-between">
+             <Button type="button" variant="outline" onClick={onBack} disabled={currentStep === 0}>
+              Back
+            </Button>
+            <Button
+              type="button"
+              onClick={handleOtpVerify}
+              className="bg-accent hover:bg-accent/90 text-accent-foreground"
+              disabled={otp.length !== 6}
+            >
+              Verify & Create Account
+            </Button>
+          </CardFooter>
+        )}
       </Form>
     </Card>
   );
