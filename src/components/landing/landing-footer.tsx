@@ -1,4 +1,7 @@
+'use client';
+
 import { Logo } from '@/components/logo';
+import { useState, useEffect } from 'react';
 
 const footerNavigation = {
   solutions: [
@@ -28,6 +31,12 @@ const footerNavigation = {
 };
 
 export function LandingFooter() {
+  const [year, setYear] = useState(new Date().getFullYear());
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
+
   return (
     <footer className="bg-background" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
@@ -110,7 +119,7 @@ export function LandingFooter() {
         </div>
         <div className="mt-16 border-t pt-8">
           <p className="text-center text-xs leading-5 text-muted-foreground">
-            &copy; {new Date().getFullYear()} Horizon Bank. All rights reserved.
+            &copy; {year} Horizon Bank. All rights reserved.
           </p>
         </div>
       </div>
