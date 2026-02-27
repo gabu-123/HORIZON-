@@ -18,7 +18,7 @@ const AccountsContext = createContext<AccountsContextType | undefined>(undefined
 const LOCAL_STORAGE_KEY = 'horizon-bank-data';
 
 export function AccountsProvider({ children }: { children: ReactNode }) {
-  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>(mockUserData.accounts);
   const [isInitialized, setIsInitialized] = useState(false);
   const [transferCount, setTransferCount] = useState(0);
   const router = useRouter();
@@ -29,12 +29,9 @@ export function AccountsProvider({ children }: { children: ReactNode }) {
       const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (storedData) {
         setAccounts(JSON.parse(storedData));
-      } else {
-        setAccounts(mockUserData.accounts);
       }
     } catch (error) {
       console.error("Failed to load data from localStorage", error);
-      setAccounts(mockUserData.accounts);
     }
     setIsInitialized(true);
   }, []);
