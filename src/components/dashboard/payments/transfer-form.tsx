@@ -61,6 +61,7 @@ export function TransferForm() {
   const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
   const [isSuccessOpen, setIsSuccessOpen] = React.useState(false);
   const [transactionId, setTransactionId] = React.useState('');
+  const [isMounted, setIsMounted] = React.useState(false);
   
   const form = useForm<BankTransferFormValues>({
     resolver: zodResolver(bankTransferSchema),
@@ -77,6 +78,10 @@ export function TransferForm() {
   });
   
   const selectedFromAccount = mockUserData.accounts.find(acc => acc.accountNumber === form.watch('fromAccount'));
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   React.useEffect(() => {
     const accountNumber = form.watch('accountNumber');
@@ -317,15 +322,17 @@ export function TransferForm() {
                               </FormControl>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={field.onChange}
-                                disabled={(date) =>
-                                  date < new Date() || date < new Date("1900-01-01")
-                                }
-                                initialFocus
-                              />
+                              {isMounted && (
+                                <Calendar
+                                  mode="single"
+                                  selected={field.value}
+                                  onSelect={field.onChange}
+                                  disabled={(date) =>
+                                    date < new Date() || date < new Date("1900-01-01")
+                                  }
+                                  initialFocus
+                                />
+                              )}
                             </PopoverContent>
                           </Popover>
                           <FormMessage />
