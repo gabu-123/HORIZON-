@@ -58,14 +58,14 @@ export type UserData = {
 const MOCK_DATE_NOW = new Date('2023-10-27T12:00:00.000Z').getTime();
 
 export const mockUserData: UserData = {
-  name: 'Alex Doe',
-  email: 'alex.doe@example.com',
+  name: 'Agelina',
+  email: 'agelina.jolie@example.com',
   accounts: [
     {
       id: 'acc_chk_1',
       type: 'Checking',
       accountNumber: '**** **** **** 1234',
-      balance: 115567.87,
+      balance: 5115567.87,
       transactions: [],
       cards: [
         {
@@ -77,7 +77,7 @@ export const mockUserData: UserData = {
           expiryDate: '12/26',
           isFrozen: false,
           spendingLimit: 5000,
-          monthlySpending: 1450.75,
+          monthlySpending: 21450.75,
         },
         {
           id: 'card_2',
@@ -85,10 +85,10 @@ export const mockUserData: UserData = {
           type: 'Virtual',
           provider: 'Mastercard',
           lastFour: '9876',
-          expiryDate: '06/25',
+          expiryDate: '06/26',
           isFrozen: true,
           spendingLimit: 1000,
-          monthlySpending: 320.50,
+          monthlySpending: 3320.50,
         },
       ],
     },
@@ -96,14 +96,14 @@ export const mockUserData: UserData = {
       id: 'acc_sav_1',
       type: 'Savings',
       accountNumber: '**** **** **** 5678',
-      balance: 28750.0,
+      balance: 328750.0,
       transactions: [],
       cards: [],
     },
   ],
   investments: {
-    totalValue: 75320.45,
-    totalGainLoss: 12820.45,
+    totalValue: 95320.45,
+    totalGainLoss: 22820.45,
     totalGainLossPercent: 20.5,
     holdings: [
         { id: 'inv_1', name: 'Apple Inc.', ticker: 'AAPL', shares: 50, price: 195.50, value: 9775.00, changePercent: 1.2 },
