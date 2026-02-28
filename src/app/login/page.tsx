@@ -141,9 +141,9 @@ export default function LoginPage() {
       <Dialog open={isOtpOpen} onOpenChange={setIsOtpOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Enter Verification Code</DialogTitle>
+            <DialogTitle>Enter OTP Code</DialogTitle>
             <DialogDescription>
-              For your security, please enter the 6-digit code.
+              We have sent an OTP code to your email. Please enter the code
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center gap-4 py-4">

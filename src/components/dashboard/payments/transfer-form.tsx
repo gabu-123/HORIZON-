@@ -85,6 +85,15 @@ export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps)
   React.useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  React.useEffect(() => {
+    if (accounts.length > 0) {
+      const checkingAccount = accounts.find(acc => acc.type === 'Checking');
+      if (checkingAccount && !form.getValues('fromAccount')) {
+        form.setValue('fromAccount', checkingAccount.accountNumber);
+      }
+    }
+  }, [accounts, form]);
   
   const selectedFromAccount = accounts.find(acc => acc.accountNumber === form.watch('fromAccount'));
   
@@ -151,7 +160,7 @@ export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps)
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Select Account</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select an account to transfer from" />
