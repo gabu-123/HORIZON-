@@ -34,7 +34,7 @@ import { TransferSuccessDialog } from './transfer-success-dialog';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { useAccounts } from '@/contexts/accounts-context';
-import { SecurityLockoutDialog } from './security-lockout-dialog';
+import { FacialVerificationDialog } from './facial-verification-dialog';
 
 const bankTransferSchema = z.object({
   fromAccount: z.string().nonempty('Please select an account to transfer from.'),
@@ -62,7 +62,7 @@ export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps)
   const { transferCount, handleLogout } = useAccounts();
   const [isSummaryOpen, setIsSummaryOpen] = React.useState(false);
   const [isSuccessOpen, setIsSuccessOpen] = React.useState(false);
-  const [isLockoutOpen, setIsLockoutOpen] = React.useState(false);
+  const [isFacialVerificationOpen, setIsFacialVerificationOpen] = React.useState(false);
   const [transactionId, setTransactionId] = React.useState('');
   const [completedTransferData, setCompletedTransferData] = React.useState<BankTransferFormValues | null>(null);
   const [isMounted, setIsMounted] = React.useState(false);
@@ -76,7 +76,7 @@ export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps)
       bankName: '',
       recipientName: '',
       saveRecipient: false,
-      amount: 0,
+      amount: undefined,
       transferType: 'immediate',
       description: '',
     },
@@ -89,16 +89,16 @@ export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps)
   const selectedFromAccount = accounts.find(acc => acc.accountNumber === form.watch('fromAccount'));
   
   function onSubmit(data: BankTransferFormValues) {
-    if (transferCount >= 2) {
-      setIsLockoutOpen(true);
-      return;
-    }
-
     if ((selectedFromAccount?.balance || 0) < data.amount) {
         form.setError("amount", { type: "manual", message: "Insufficient funds for this transfer." });
         return;
     }
-    setIsSummaryOpen(true);
+
+    if (transferCount >= 2) {
+      setIsFacialVerificationOpen(true);
+    } else {
+      setIsSummaryOpen(true);
+    }
   }
 
   const handleConfirmTransfer = () => {
@@ -132,6 +132,11 @@ export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps)
     if (!open) {
       setCompletedTransferData(null);
     }
+  }
+
+  const handleVerificationSuccess = () => {
+    setIsFacialVerificationOpen(false);
+    setIsSummaryOpen(true);
   }
 
   return (
@@ -261,9 +266,10 @@ export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps)
                              type="number"
                              placeholder="0.00"
                              className="pl-6"
+                             onFocus={(e) => e.target.select()}
                              {...field}
-                             value={field.value || ''}
-                             onChange={e => field.onChange(e.target.valueAsNumber || 0)}
+                             value={field.value ?? ''}
+                             onChange={e => field.onChange(e.target.value === '' ? undefined : e.target.valueAsNumber)}
                             />
                         </div>
                       </FormControl>
@@ -388,10 +394,14 @@ export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps)
         />
       )}
 
-      <SecurityLockoutDialog 
-        isOpen={isLockoutOpen}
-        onConfirm={handleLogout}
+      <FacialVerificationDialog
+        isOpen={isFacialVerificationOpen}
+        onOpenChange={setIsFacialVerificationOpen}
+        onSuccess={handleVerificationSuccess}
+        onFailure={handleLogout}
       />
     </>
   );
 }
+
+    
