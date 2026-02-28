@@ -257,7 +257,7 @@ export function TransferForm() {
                              placeholder="0.00"
                              className="pl-6"
                              {...field}
-                             onFocus={(e) => e.target.select()}
+                             value={field.value || ''}
                              onChange={e => field.onChange(e.target.valueAsNumber || 0)}
                             />
                         </div>
