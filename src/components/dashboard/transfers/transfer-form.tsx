@@ -257,7 +257,14 @@ export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps)
                        <FormControl>
                         <div className="relative">
                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                           <Input type="number" placeholder="0.00" className="pl-6" {...field} onChange={e => field.onChange(parseFloat(e.target.value) || 0)} />
+                           <Input
+                             type="number"
+                             placeholder="0.00"
+                             className="pl-6"
+                             {...field}
+                             onFocus={(e) => e.target.select()}
+                             onChange={e => field.onChange(e.target.valueAsNumber || 0)}
+                            />
                         </div>
                       </FormControl>
                       <FormMessage />
