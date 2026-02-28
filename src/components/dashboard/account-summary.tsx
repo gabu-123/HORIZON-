@@ -8,7 +8,7 @@ import {
 import type { Account } from '@/lib/mock-data';
 import { DollarSign, Wallet } from 'lucide-react';
 
-export function AccountSummary({ accounts }: { accounts: Account[] }) {
+export function AccountSummary({ accounts, name }: { accounts: Account[], name: string }) {
   const checkingAccount = accounts.find(
     (acc) => acc.type === 'Checking'
   );
@@ -20,7 +20,7 @@ export function AccountSummary({ accounts }: { accounts: Account[] }) {
     <>
       <Card className="sm:col-span-2">
         <CardHeader className="pb-2">
-          <CardTitle>Welcome back, 874219!</CardTitle>
+          <CardTitle>Welcome back, {name}!</CardTitle>
           <CardDescription>
             Here&apos;s a summary of your accounts.
           </CardDescription>
