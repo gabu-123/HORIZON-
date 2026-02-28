@@ -34,7 +34,8 @@ interface TransferSummaryProps {
 
 export function TransferSummary({ isOpen, onOpenChange, onConfirm, data, fromAccount }: TransferSummaryProps) {
   const transferFee = 2.50;
-  const totalDebit = data.amount + transferFee;
+  const amount = data.amount || 0;
+  const totalDebit = amount + transferFee;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -62,7 +63,7 @@ export function TransferSummary({ isOpen, onOpenChange, onConfirm, data, fromAcc
             
             <div className="flex justify-between">
                 <span className="text-muted-foreground">Transfer Amount</span>
-                <span className="font-medium">{data.amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</span>
+                <span className="font-medium">{amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</span>
             </div>
              <div className="flex justify-between">
                 <span className="text-muted-foreground">Transfer Fee</span>

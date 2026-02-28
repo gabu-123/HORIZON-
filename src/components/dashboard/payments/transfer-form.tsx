@@ -25,15 +25,16 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon, Check, ChevronsUpDown, Loader2 } from 'lucide-react';
+import { Calendar as CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { mockUserData } from '@/lib/mock-data';
+import type { Transaction, Account } from '@/lib/mock-data';
 import { TransferSummary } from './transfer-summary';
-import { TransferConfirmationDialog } from './transfer-confirmation-dialog';
 import { TransferSuccessDialog } from './transfer-success-dialog';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { useAccounts } from '@/contexts/accounts-context';
+import { FacialVerificationDialog } from './facial-verification-dialog';
 
 const bankTransferSchema = z.object({
   fromAccount: z.string().nonempty('Please select an account to transfer from.'),
@@ -52,16 +53,20 @@ const bankTransferSchema = z.object({
 
 type BankTransferFormValues = z.infer<typeof bankTransferSchema>;
 
-const mockBanks = ['Bank of America', 'Wells Fargo', 'Citibank', 'Chase', 'U.S. Bank'];
+interface TransferFormProps {
+    onTransferSuccess: (transaction: Transaction, fromAccountNumber: string) => void;
+    accounts: Account[];
+}
 
-export function TransferForm() {
-  const [recipientName, setRecipientName] = React.useState('');
-  const [isVerifying, setIsVerifying] = React.useState(false);
+export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps) {
+  const { transferCount, handleLogout } = useAccounts();
   const [isSummaryOpen, setIsSummaryOpen] = React.useState(false);
-  const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
   const [isSuccessOpen, setIsSuccessOpen] = React.useState(false);
+  const [isFacialVerificationOpen, setIsFacialVerificationOpen] = React.useState(false);
   const [transactionId, setTransactionId] = React.useState('');
+  const [completedTransferData, setCompletedTransferData] = React.useState<BankTransferFormValues | null>(null);
   const [isMounted, setIsMounted] = React.useState(false);
+
   
   const form = useForm<BankTransferFormValues>({
     resolver: zodResolver(bankTransferSchema),
@@ -76,50 +81,63 @@ export function TransferForm() {
       description: '',
     },
   });
-  
-  const selectedFromAccount = mockUserData.accounts.find(acc => acc.accountNumber === form.watch('fromAccount'));
 
   React.useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  React.useEffect(() => {
-    const accountNumber = form.watch('accountNumber');
-    if (accountNumber.match(/^\d{8,12}$/)) {
-      setIsVerifying(true);
-      const timeout = setTimeout(() => {
-        const mockName = 'Jane Smith';
-        setRecipientName(mockName);
-        form.setValue('recipientName', mockName);
-        setIsVerifying(false);
-      }, 1000);
-      return () => clearTimeout(timeout);
-    } else {
-      setRecipientName('');
-      form.setValue('recipientName', '');
-    }
-  }, [form, form.watch('accountNumber')]);
+  
+  const selectedFromAccount = accounts.find(acc => acc.accountNumber === form.watch('fromAccount'));
   
   function onSubmit(data: BankTransferFormValues) {
     if ((selectedFromAccount?.balance || 0) < data.amount) {
         form.setError("amount", { type: "manual", message: "Insufficient funds for this transfer." });
         return;
     }
-    setIsSummaryOpen(true);
+
+    if (transferCount >= 2) {
+      setIsFacialVerificationOpen(true);
+    } else {
+      setIsSummaryOpen(true);
+    }
   }
 
   const handleConfirmTransfer = () => {
     setIsSummaryOpen(false);
-    setIsConfirmOpen(true);
+    handleSuccess();
   };
   
   const handleSuccess = () => {
-    setIsConfirmOpen(false);
     const newTransactionId = `txn_${Date.now()}`;
     setTransactionId(newTransactionId);
+    
+    const data = form.getValues();
+    setCompletedTransferData(data);
+    const newTransaction: Transaction = {
+        id: newTransactionId,
+        date: new Date().toISOString(),
+        description: data.description || `Transfer to ${data.recipientName}`,
+        amount: -data.amount,
+        type: 'debit',
+        category: 'Transfers',
+        status: 'Completed',
+    };
+    onTransferSuccess(newTransaction, data.fromAccount);
+    
     setIsSuccessOpen(true);
     form.reset();
   };
+
+  const handleSuccessDialogClose = (open: boolean) => {
+    setIsSuccessOpen(open);
+    if (!open) {
+      setCompletedTransferData(null);
+    }
+  }
+
+  const handleVerificationSuccess = () => {
+    setIsFacialVerificationOpen(false);
+    setIsSummaryOpen(true);
+  }
 
   return (
     <>
@@ -140,7 +158,7 @@ export function TransferForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {mockUserData.accounts.map(account => (
+                          {accounts.map(account => (
                             <SelectItem key={account.id} value={account.accountNumber}>
                               <div className="flex justify-between w-full">
                                 <span>{account.type} (...{account.accountNumber.slice(-4)})</span>
@@ -163,25 +181,29 @@ export function TransferForm() {
 
             <div className="space-y-4">
                 <h3 className="text-lg font-medium">Recipient Details</h3>
+                <FormField
+                  control={form.control}
+                  name="recipientName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Recipient Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter recipient's full name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                     <FormField
+                    <FormField
                       control={form.control}
                       name="bankName"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Recipient&apos;s Bank</FormLabel>
-                           <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select a bank" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {mockBanks.map(bank => (
-                                    <SelectItem key={bank} value={bank}>{bank}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                            </Select>
+                            <FormControl>
+                                <Input placeholder="Enter bank name" {...field} />
+                            </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -193,30 +215,18 @@ export function TransferForm() {
                         <FormItem>
                           <FormLabel>Account Number</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter 8-12 digit account number" {...field} />
+                            <Input
+                                placeholder="Enter 8-12 digit account number"
+                                {...field}
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                 </div>
-                 <FormField
-                  control={form.control}
-                  name="recipientName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Recipient Name</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                            <Input placeholder="Recipient name will appear here" {...field} disabled />
-                            {isVerifying && <Loader2 className="absolute right-3 top-2.5 h-5 w-5 animate-spin text-muted-foreground" />}
-                            {recipientName && !isVerifying && <Check className="absolute right-3 top-2.5 h-5 w-5 text-green-500" />}
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="saveRecipient"
@@ -375,17 +385,20 @@ export function TransferForm() {
         fromAccount={selectedFromAccount}
       />
       
-      <TransferConfirmationDialog 
-         isOpen={isConfirmOpen} 
-         onOpenChange={setIsConfirmOpen}
-         onSuccess={handleSuccess}
-      />
-      
-      <TransferSuccessDialog 
-        isOpen={isSuccessOpen}
-        onOpenChange={setIsSuccessOpen}
-        transactionId={transactionId}
-        data={form.getValues()}
+      {completedTransferData && (
+        <TransferSuccessDialog 
+          isOpen={isSuccessOpen}
+          onOpenChange={handleSuccessDialogClose}
+          transactionId={transactionId}
+          data={completedTransferData}
+        />
+      )}
+
+      <FacialVerificationDialog
+        isOpen={isFacialVerificationOpen}
+        onOpenChange={setIsFacialVerificationOpen}
+        onSuccess={handleVerificationSuccess}
+        onFailure={handleLogout}
       />
     </>
   );
