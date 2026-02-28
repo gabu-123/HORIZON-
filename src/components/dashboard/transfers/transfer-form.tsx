@@ -169,7 +169,7 @@ export function TransferForm({ onTransferSuccess, accounts }: TransferFormProps)
                         </SelectContent>
                       </Select>
                       <FormDescription>
-                        Available Balance: {selectedFromAccount?.balance.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) || '$0.00'}
+                        Available Balance: {selectedFromAccount?.balance?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) || '$0.00'}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

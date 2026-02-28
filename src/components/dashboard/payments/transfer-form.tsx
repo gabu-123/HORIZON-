@@ -71,7 +71,7 @@ export function TransferForm() {
       bankName: '',
       recipientName: '',
       saveRecipient: false,
-      amount: 0,
+      amount: undefined,
       transferType: 'immediate',
       description: '',
     },
@@ -151,7 +151,7 @@ export function TransferForm() {
                         </SelectContent>
                       </Select>
                       <FormDescription>
-                        Available Balance: {selectedFromAccount?.balance.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) || '$0.00'}
+                        Available Balance: {selectedFromAccount?.balance?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) || '$0.00'}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -256,9 +256,10 @@ export function TransferForm() {
                              type="number"
                              placeholder="0.00"
                              className="pl-6"
+                             onFocus={(e) => e.target.select()}
                              {...field}
-                             value={field.value || ''}
-                             onChange={e => field.onChange(e.target.valueAsNumber || 0)}
+                             value={field.value ?? ''}
+                             onChange={e => field.onChange(e.target.value === '' ? undefined : e.target.valueAsNumber)}
                             />
                         </div>
                       </FormControl>
