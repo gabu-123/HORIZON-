@@ -32,7 +32,17 @@ const mockAccountBalances = {
   savings: 8765.20,
 };
 
-const mockTransactionHistory = {
+type MockTransaction = {
+  date: string;
+  description: string;
+  amount: number;
+  type: 'credit' | 'debit';
+};
+
+const mockTransactionHistory: {
+  checking: MockTransaction[];
+  savings: MockTransaction[];
+} = {
   checking: [
     {date: '2023-10-26', description: 'Grocery Store', amount: -75.30, type: 'debit'},
     {date: '2023-10-25', description: 'Paycheck', amount: 1500.00, type: 'credit'},
