@@ -106,7 +106,7 @@ const getTransactionHistoryTool = ai.defineTool(
       })
     ),
   },
-  async input => {
+  async (input) => {
     // In a real application, this would call a banking service API.
     await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
     const history = mockTransactionHistory[input.accountType];
