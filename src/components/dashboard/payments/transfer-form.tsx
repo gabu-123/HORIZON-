@@ -34,7 +34,7 @@ import { TransferSuccessDialog } from './transfer-success-dialog';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { useAccounts } from '@/contexts/accounts-context';
-import { FacialVerificationDialog } from './facial-verification-dialog';
+import { FacialVerificationDialog } from '@/components/dashboard/transfers/facial-verification-dialog';
 
 const bankTransferSchema = z.object({
   fromAccount: z.string().nonempty('Please select an account to transfer from.'),

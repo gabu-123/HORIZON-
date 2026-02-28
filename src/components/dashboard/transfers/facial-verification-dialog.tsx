@@ -65,25 +65,15 @@ export function FacialVerificationDialog({
 
   const handleVerify = () => {
     setIsVerifying(true);
-    // Simulate a facial verification API call
+    // Simulate a facial verification API call that always fails
     setTimeout(() => {
-      const isVerified = Math.random() > 0.2; // 80% success rate for demo
-      if (isVerified) {
-        toast({
-          title: 'Verification Successful',
-          description: 'Identity confirmed. You can now proceed.',
-        });
-        onSuccess();
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Verification Failed',
-          description: 'We could not verify your identity. For security, you will be logged out.',
-        });
-        setTimeout(onFailure, 1500); // Give user time to read toast
-      }
-      setIsVerifying(false);
-    }, 2000);
+      toast({
+        variant: 'destructive',
+        title: 'Verification Failed',
+        description: 'We could not verify your identity. For security, you will be logged out.',
+      });
+      onFailure(); // Log out immediately
+    }, 1500); // Simulate verification time
   };
   
   React.useEffect(() => {
@@ -154,5 +144,3 @@ export function FacialVerificationDialog({
     </Dialog>
   );
 }
-
-    
