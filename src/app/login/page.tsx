@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Logo } from '@/components/logo';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -36,6 +36,12 @@ export default function LoginPage() {
   const [isOtpOpen, setIsOtpOpen] = useState(false);
   const [otp, setOtp] = useState('');
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Clear persisted data when the user lands on the login page
+    // to ensure a clean state for the new session.
+    localStorage.removeItem('horizon-bank-data');
+  }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
